@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     Vector2 reticlepos;
     Vector2 direction;
     [SerializeField] float speed = 10f;
+    [SerializeField] float regGrav = 1.0f;
+    [SerializeField] float wallGrav = 0.5f;
 
     bool onFloor = false;
     //[SerializeField] float acceleration = 1f;
@@ -46,17 +48,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Floor"))
+        if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
         {
             onFloor = true;
+
+        }
+        if (col.gameObject.CompareTag("Wall"))
+        {
+            rb.gravityScale = wallGrav;
+
         }
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Floor"))
+        if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
         {
             onFloor = false;
+        }
+        if (col.gameObject.CompareTag("Wall"))
+        {
+            rb.gravityScale = regGrav;
         }
     }
 }
