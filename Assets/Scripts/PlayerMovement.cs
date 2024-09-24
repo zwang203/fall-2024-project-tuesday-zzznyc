@@ -16,12 +16,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float regGrav = 1.0f;
     [SerializeField] float wallGrav = 0.5f;
     [SerializeField] int numJumps = 1;
-
-    //bool onFloor = false;
     int currentJumps;
-    //[SerializeField] float acceleration = 1f;
-    //[SerializeField] float maxspeed = 300f;
-    // Start is called before the first frame update
+    bool onWall = false;
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -36,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
             playerpos = (Vector2)transform.position;
             reticlepos = (Vector2)reticle.transform.position;
             direction = reticlepos - playerpos;
-            if (currentJumps < numJumps)
+            if (currentJumps < numJumps || onWall)
             {
                 rb.velocity = Vector3.zero;
             }
@@ -60,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         if (col.gameObject.CompareTag("Wall"))
         {
             currentJumps = numJumps;
+            onWall = true;
             if (rb.velocity.y < 0)
             {
                 rb.gravityScale = wallGrav;
@@ -84,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
         if (col.gameObject.CompareTag("Wall"))
         {
             rb.gravityScale = regGrav;
+            onWall = false;
         }
         if (col.gameObject.CompareTag("Floor"))
         {
