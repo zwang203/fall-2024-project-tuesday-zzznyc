@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float speed = 10f;
     [SerializeField] float regGrav = 1.0f;
     [SerializeField] float wallGrav = 0.5f;
-    [SerializeField] int numJumps = 2;
+    [SerializeField] int numJumps = 1;
 
     //bool onFloor = false;
     int currentJumps;
@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
             playerpos = (Vector2)transform.position;
             reticlepos = (Vector2)reticle.transform.position;
             direction = reticlepos - playerpos;
-            if (currentJumps < 2)
+            if (currentJumps < numJumps)
             {
                 rb.velocity = Vector3.zero;
             }
@@ -57,27 +57,37 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
-        {
-            //onFloor = true;
-            currentJumps = numJumps;
-        }
         if (col.gameObject.CompareTag("Wall"))
         {
-            rb.gravityScale = wallGrav;
-
+            currentJumps = numJumps;
+            if (rb.velocity.y < 0)
+            {
+                rb.gravityScale = wallGrav;
+            }
         }
+    }
+   
+
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        
+        if (col.gameObject.CompareTag("Floor"))
+        {
+       
+            currentJumps = numJumps;
+        }
+        
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
-        {
-            //onFloor = false;
-        }
         if (col.gameObject.CompareTag("Wall"))
         {
             rb.gravityScale = regGrav;
+        }
+        if (col.gameObject.CompareTag("Floor"))
+        {
+            currentJumps = numJumps -1 ;
         }
     }
 }
