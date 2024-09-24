@@ -15,25 +15,34 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float speed = 10f;
     [SerializeField] float regGrav = 1.0f;
     [SerializeField] float wallGrav = 0.5f;
+    [SerializeField] int numJumps = 2;
 
-    bool onFloor = false;
+    //bool onFloor = false;
+    int currentJumps;
     //[SerializeField] float acceleration = 1f;
     //[SerializeField] float maxspeed = 300f;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        currentJumps = numJumps;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp("space") && onFloor)
+        if (Input.GetKeyUp("space") && currentJumps > 0)
         {
             playerpos = (Vector2)transform.position;
             reticlepos = (Vector2)reticle.transform.position;
             direction = reticlepos - playerpos;
+            if (currentJumps < 2)
+            {
+                rb.velocity = Vector3.zero;
+            }
+            
             rb.AddForce(direction.normalized * speed);
+            currentJumps--;
         }
         if (Input.GetKeyUp("r"))
         {
@@ -50,8 +59,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
         {
-            onFloor = true;
-
+            //onFloor = true;
+            currentJumps = numJumps;
         }
         if (col.gameObject.CompareTag("Wall"))
         {
@@ -64,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Floor") || col.gameObject.CompareTag("Wall"))
         {
-            onFloor = false;
+            //onFloor = false;
         }
         if (col.gameObject.CompareTag("Wall"))
         {
