@@ -38,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (currentJumps <= 0)
+        {
+            RestartGame();
+        }
+
         if (Input.GetKeyUp("space") && currentJumps > 0 && onWall) 
         {
             playerpos = (Vector2)transform.position;
@@ -105,5 +110,10 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateStepsText()
     {
         stepsText.text = "Steps Remaining: " + currentJumps.ToString();
+    }
+
+    void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
