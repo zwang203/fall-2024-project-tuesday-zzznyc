@@ -11,7 +11,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject reticlecenter;
     [SerializeField] TextMeshProUGUI stepsText;
     //bool spacepressed = false;
+
     Rigidbody2D rb;
+    bool facingRight = true;
+
+    bool wallSliding;
+    [SerializeField] float wallSlidingSpeed = 2f;
+
+    bool wallJumping;
+
     Vector2 playerpos;
     Vector2 reticlepos;
     Vector2 direction;
@@ -19,6 +27,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float regGrav = 1.0f;
     [SerializeField] float wallGrav = 0.5f;
     [SerializeField] int numJumps = 5;
+    [SerializeField] Transform groundCheck;
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] Transform wallCheck;
+    [SerializeField] LayerMask wallLayer;
 
     int currentJumps;
     
@@ -42,7 +54,18 @@ public class PlayerMovement : MonoBehaviour
         {
             RestartGame();
         }
-
+        if (Input.GetKeyDown("space") && IsGrounded())
+        {
+            playerpos = (Vector2)transform.position;
+            reticlepos = (Vector2)reticle.transform.position;
+            direction = reticlepos - playerpos;
+            rb.AddForce(direction.normalized * speed);
+        }
+        if(Input.GetKeyUp("space") && rb.velocity.y > 0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+        }
+        /*
         if (Input.GetKeyUp("space") && currentJumps > 0 && onWall) 
         {
             playerpos = (Vector2)transform.position;
@@ -56,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(direction.normalized * speed);
             
         }
+        */
         if (Input.GetKeyUp("r"))
         {
             string currentscene = SceneManager.GetActiveScene().name;
@@ -65,9 +89,46 @@ public class PlayerMovement : MonoBehaviour
         {
             Application.Quit();
         }
+
+        WallSlide();
+        Flip();
         UpdateStepsText();
     }
 
+    void Flip()
+    {
+        if ((facingRight && reticle.transform.position.x-transform.position.x < 0) || (!facingRight && reticle.transform.position.x - transform.position.x >0))
+        {
+            facingRight = !facingRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+
+    bool IsGrounded()
+    {
+        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+    bool IsWalled()
+    {
+        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallLayer);
+    }
+
+    void WallSlide()
+    {
+        if(IsWalled() && !IsGrounded())
+        {
+            wallSliding = true;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
+        }
+        else
+        {
+            wallSliding = false;
+        }
+    }
+
+    /*
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.CompareTag("Wall"))
@@ -107,6 +168,8 @@ public class PlayerMovement : MonoBehaviour
         }
         onWall = false;
     }
+    */
+
     private void UpdateStepsText()
     {
         stepsText.text = "Steps Remaining: " + currentJumps.ToString();
