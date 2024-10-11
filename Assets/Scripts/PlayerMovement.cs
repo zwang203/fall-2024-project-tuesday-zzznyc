@@ -19,6 +19,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float wallSlidingSpeed = 2f;
 
     bool wallJumping;
+    float wallJumpDirection;
+    [SerializeField] float wallJumpTime = 0.2f;
+    [SerializeField] int wallJumpCounter;
+    [SerializeField] float wallJumpDuration = 0.4f;
+    [SerializeField] Vector2 wallJumpPower = new Vector2(8f, 16f);
 
     Vector2 playerpos;
     Vector2 reticlepos;
@@ -54,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
         {
             RestartGame();
         }
-        if (Input.GetKeyDown("space") && IsGrounded())
+        if (Input.GetKeyDown("space") && (IsGrounded() || IsWalled()))
         {
             playerpos = (Vector2)transform.position;
             reticlepos = (Vector2)reticle.transform.position;
@@ -125,6 +130,15 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             wallSliding = false;
+        }
+    }
+    
+    void WallJump()
+    {
+        if (wallSliding)
+        {
+            wallJumping = false;
+
         }
     }
 
