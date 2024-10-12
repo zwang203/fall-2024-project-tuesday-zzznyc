@@ -2258,7 +2258,7 @@ MonoBehaviour:
   firePoint: {fileID: 1668217996}
   projectileSpeed: 10
   fireRate: 5
-  disableGravity: 1
+  shootDirection: 2
 --- !u!212 &1668217998
 SpriteRenderer:
   m_ObjectHideFlags: 0

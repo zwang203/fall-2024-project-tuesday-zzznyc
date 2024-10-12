@@ -17,7 +17,6 @@ public class Projectile : MonoBehaviour
             RestartGame();
         }
     }
-
     void RestartGame()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
