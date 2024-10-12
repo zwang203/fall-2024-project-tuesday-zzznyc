@@ -40,6 +40,8 @@ public class ReticleMove : MonoBehaviour
             */
             transform.Rotate(new Vector3(0f, 0f, rotatespeed * Time.deltaTime));
         }
+
+       
         transform.position = player.transform.position;
     }
 }
